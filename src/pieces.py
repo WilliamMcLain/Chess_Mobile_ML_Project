@@ -32,11 +32,11 @@ class Pieces():
         letterAlphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         numberAlphabet = ['1', '2', '3', '4', '5', '6', '7', '8']
         if piece.isin(pieceAlphabet):
-            let1 = start.substring(0) #letter 1
-            num1 = start.substring(1) #number 1
+            let1 = start[0] #letter 1
+            num1 = start[1] #number 1
             if let1.isin(letterAlphabet) and num1.isin(numberAlphabet):
-                let2 = end.substring(0) #letter 2
-                num2 = end.substring(1) #number 2
+                let2 = end[0] #letter 2
+                num2 = end[1] #number 2
                 if let2.isin(letterAlphabet) and num2.isin(numberAlphabet):
                     return True
                 else:
@@ -63,14 +63,14 @@ class Pieces():
         match side:
             case 'w':
                 match piece:
-                    case ['p', 'pp']:
+                    case 'p' | 'pp':
                         #2 out on start (complete)
                         #if pawn is in starting position, end position can be 2 out
-                        if(abs(int(end.substring(1))-int(start.substring(1))) == 2):
-                            if(int(start.substring(1)) == 2):
+                        if(abs(int(end[1])-int(start[1])) == 2):
+                            if(int(start[1]) == 2):
                                 pos = csv_setup(find(end))
-                                let = end.substring(0)
-                                num = end.substring(1) - 1
+                                let = end[0]
+                                num = end[1] - 1
                                 pospre = let + num
                                 pospreP = csv_setup(find(pospre))
                                 #check if move is legal
@@ -84,13 +84,13 @@ class Pieces():
                             return False
                         #en passant (complete)
                         #checking row movement first
-                        if(int(start.substring(1)==6) and (int(end.substring(1)==7))):
+                        if(int(start[1]==6) and (int(end[1]==7))):
                             #check column either 1 left or 1 right
-                            if(abs(ord(start.substring(0)) - start.substring(1)) == 1):
+                            if(abs(ord(start[0]) - start[1]) == 1):
                                 #check if black piece is there
                                 #check if black piece present
-                                let = end.substring(0)
-                                num = end.substring(1) - 2
+                                let = end[0]
+                                num = end[1] - 2
                                 posData = let + num
                                 if(csv_setup(find()) == 'pp'):
                                     return True
@@ -104,19 +104,19 @@ class Pieces():
                         #if pawn is on the row opposite to where it started, than, it can take if another pawn is diagonal
                         #taking
                         #check row
-                        if(int(end.substring(1))-int(start.substring(1)) == 1):
+                        if(int(end[1])-int(start[1]) == 1):
                             #check column both polarity is checked
-                            if(int(ord(end.substring(0))-ord(start.substring(0))) == 1):
+                            if(int(ord(end[0])-ord(start[0])) == 1):
                                 #check piece
-                                if(csv_setup(find(end)).contains('b')):
+                                if('b' in csv_setup(find(end))):
                                     return True
                                 else:
                                     return False
                         
                         #regular movement(compete)
-                        if(int(end.substring(1)) - int(start.substring(1)) == 1):
+                        if(int(end[1]) - int(start[1]) == 1):
                             #check for other piece
-                            if(csv_setup(find(end)).contains('e')):
+                            if('e' in csv_setup(find(end))):
                                 return True
                             else:
                                 return False      
@@ -128,8 +128,8 @@ class Pieces():
             
                     case 'b':
                         #regular movement
-                        rowDiff = int(end.substring(1))-int(start.substring(1))
-                        colDiff = int(ord(end.substring(0))-ord(start.substring(0)))
+                        rowDiff = int(end[1])-int(start[1])
+                        colDiff = int(ord(end[0])-ord(start[0]))
                         if rowDiff or colDiff != 0:
                             if (rowDiff/colDiff == 1):
                                 return True
@@ -137,9 +137,9 @@ class Pieces():
                             return False
                     case 'h':
                         #check if one dif is 2 and one is 1. I think this covers
-                        rowDiff = int(abs(end.substring(1))-int(start.substring(1)))
-                        colDiff = int(abs(ord(end.substring(0))-ord(start.substring(0))))
-                        if(colDiff + rowDiff == 3):
+                        rowDiff = int(abs(end[1])-int(start[1]))
+                        colDiff = int(abs(ord(end[0])-ord(start[0])))
+                        if sorted([abs(rowDiff), abs(colDiff)]) == [1, 2]:
                             #only check if piece is at the end
                             if is_piece(end) != 'e':
                                 if is_piece(end)[0] != 'b':
@@ -149,8 +149,8 @@ class Pieces():
                             return False
                         #regular movement
                     case 'k':
-                        rowDiff = int(abs(end.substring(1))-int(start.substring(1)))
-                        colDiff = int(abs(ord(end.substring(0))-ord(start.substring(0))))
+                        rowDiff = int(abs(end[1])-int(start[1]))
+                        colDiff = int(abs(ord(end[0])-ord(start[0])))
                         if(colDiff + rowDiff == 1):
                             #check piece
                             if is_piece_interrupt(start, end) == True:
@@ -162,8 +162,8 @@ class Pieces():
                         #regular movement
                     case 'q':
                         #regular movement
-                        rowDiff = int(end.substring(1))-int(start.substring(1))
-                        colDiff = int(ord(end.substring(0))-ord(start.substring(0)))
+                        rowDiff = int(end[1])-int(start[1])
+                        colDiff = int(ord(end[0])-ord(start[0]))
 
                         if rowDiff or colDiff != 0:
                             #moving diagonal
@@ -201,14 +201,14 @@ class Pieces():
             case 'b':
 
                 match piece:
-                    case ['p', 'pp']:
+                    case 'p' | 'pp':
                         #2 out on start (black pawns start on row 7, move downward)
                             #if pawn is in starting position, end position can be 2 out
-                        if(abs(int(end.substring(1))-int(start.substring(1))) == 2):
-                            if(int(start.substring(1)) == 7):
+                        if(abs(int(end[1])-int(start[1])) == 2):
+                            if(int(start[1]) == 7):
                                 pos = csv_setup(find(end))
-                                let = end.substring(0)
-                                num = end.substring(1) + 1
+                                let = end[0]
+                                num = end[1] + 1
                                 pospre = let + num
                                 pospreP = csv_setup(find(pospre))
                                 if(pos == 'e' and pospreP == 'e'):
@@ -221,10 +221,10 @@ class Pieces():
                             return False
                         #en passente
                             #if pawn is on the row opposite to where it started, than, it can take if another pawn is diagonal
-                        if(int(start.substring(1)) == 1) and (int(end.substring(1)) ==2):
-                            if(abs(ord(start.substring(0)) - ord(end.substring(0))) == 1):
-                                let = end.substring(0)
-                                num = end.substring(1) + 1
+                        if(int(start[1]) == 1) and (int(end[1]) ==2):
+                            if(abs(ord(start[0]) - ord(end[0])) == 1):
+                                let = end[0]
+                                num = end[1] + 1
                                 posData = let + num
                                 if(csv_setup(find(posData)) == 'wp'):
                                     return True
@@ -235,14 +235,14 @@ class Pieces():
                         else:
                             return False
                         #taking diagonally
-                        if(int(end.substring(1)) - int(start.substring(1)) == -1):
-                            if(abs(int(ord(end.substring(0)) - ord(start.substring(0)))) == 1):
-                                if(csv_setup(find(End)).contains('w')):
+                        if(int(end[1]) - int(start[1]) == -1):
+                            if(abs(int(ord(end[0]) - ord(start[0]))) == 1):
+                                if('w' in csv_setup(find(End))):
                                     return True
                                 else:
                                     return False
                         #regular movement
-                        if (int(end.substring(1)) - int(start.substring(1)) == -1):
+                        if (int(end[1]) - int(start[1]) == -1):
                             if(csv_setup(find(end)) == 'e'):
                                 return True
                             else:
@@ -252,19 +252,19 @@ class Pieces():
             
                     case 'b':
                         #regular movement
-                        rowDiff = int(end.substring(1)) - int(start.substring(1))
-                        colDiff = int(ord(end.substring(0)) - ord(start.substring(0)))
+                        rowDiff = int(end[1]) - int(start[1])
+                        colDiff = int(ord(end[0]) - ord(start[0]))
                         if rowDiff or colDiff != 0:
                             if (rowDiff / colDiff == 1):
                                 if is_piece_interrupt(start, end) == False:
-                                    if not csv_setup(find(end)).contains('b'):
+                                    if not ('b' in csv_setup(find(end))):
                                         return True
                         return False
                     case 'h':
                         #regular movement
-                        rowDiff = int(end.substring(1)) - int(start.substring(1))
-                        colDiff = int(ord(end.substring(0)) - ord(start.substring(0)))
-                        if(colDiff + rowDiff == 3):
+                        rowDiff = int(end[1]) - int(start[1])
+                        colDiff = int(ord(end[0]) - ord(start[0]))
+                        if sorted([abs(rowDiff), abs(colDiff)]) == [1, 2]:
                             if is_piece(end) != 'e':
                                 if is_piece(end)[0] == 'b':
                                     return False
@@ -274,38 +274,38 @@ class Pieces():
                             return False
                     case 'k':
                         #regular movement
-                        rowDiff = int(end.substring(1)) - int(start.substring(1))
-                        colDiff = int(ord(end.substring(0)) - ord(start.substring(0)))
+                        rowDiff = int(end[1]) - int(start[1])
+                        colDiff = int(ord(end[0]) - ord(start[0]))
                         if(colDiff + rowDiff == 1):
                             if is_piece_interrupt(start, end) == True:
                                 return False
-                            if csv_setup(find(end)).contains('b'):
+                            if 'b' in csv_setup(find(end)):
                                 return False
                             return True
                         else:
                             return False
                     case 'q':
                         #regular movement
-                        rowDiff = int(end.substring(1)) - int(start.substring(1))
-                        colDiff = int(ord(end.substring(0)) - ord(start.substring(0)))
+                        rowDiff = int(end[1]) - int(start[1])
+                        colDiff = int(ord(end[0]) - ord(start[0]))
                         if rowDiff or colDiff != 0:
                             if (rowDiff / colDiff == 1):
                                 if is_piece_interrupt(start, end) == False:
-                                    if not csv_setup(find(end)).contains('b'):
+                                    if not ('b' in csv_setup(find(end))):
                                         return True
                             elif(rowDiff == 0) != (colDiff == 0):
                                 if is_piece_interrupt(start, end) == False:
-                                    if not csv_setup(find(end)).contains('b'):
+                                    if not ('b' in csv_setup(find(end))):
                                         return True
                         return False
                     case 'c':
             
                         #regular movement
-                        rowDiff = int(end.substring(1)) - int(start.substring(1))
-                        colDiff = int(ord(end.substring(0)) - ord(start.substring(0)))
+                        rowDiff = int(end[1]) - int(start[1])
+                        colDiff = int(ord(end[0]) - ord(start[0]))
                         if(rowDiff == 0) != (colDiff ==0):
                             if is_piece_interrupt(start, end) == False:
-                                if not csv_setup(find(end)).contains('b'):
+                                if not ('b' in csv_setup(find(end))):
                                     return True
                         return False
                         #if start on left
@@ -336,7 +336,7 @@ class Pieces():
         alphabet = string.ascii_lowercase
         #we can leverage that piece either moves diagnol or horizontal 
         #fix stateent I cant figure out conditions exactly
-        if(int(end.substring(1))-int(start.substring(1)) / int(ord(end.substring(0))-ord(start.substring(0))) == 1):
+        if(int(end[1])-int(start[1]) / int(ord(end[0])-ord(start[0])) == 1):
             for i in range(0, max(diffLetter, diffNum)):
                 numP = diffNum + i
                 pos = alphabet[diffLetter + i] + numP 
@@ -346,7 +346,7 @@ class Pieces():
         else:
             for i in range(0, max(diffLetter, diffNum)):
                 #change row (num change)
-                if end.substring(0) != start.substring(0):
+                if end[0] != start[0]:
                     numP = diffNum + i
                     pos = alphabet[diffLetter] + numP 
                     posStr = csv_setup(find(pos))
@@ -388,23 +388,23 @@ class Pieces():
 
     def inBetween(start, end):
         move = []
-        rowDiff = int(end.substring(1))-int(start.substring(1))
-        colDiff = int(ord(end.substring(0))-ord(start.substring(0)))
+        rowDiff = int(end[1])-int(start[1])
+        colDiff = int(ord(end[0])-ord(start[0]))
         #horizontal
-        if (start.substring(0) == end.substring(0)):
+        if (start[0] == end[0]):
             move.append(start)
             for i in range(0, colDiff):
-                letter = alphabet[ord(start.substring(0)) + i]
-                num = str(int(start.substring(1)))
+                letter = alphabet[ord(start[0]) + i]
+                num = str(int(start[1]))
                 pos = letter + num
                 move.append(pos)
             return move
         #vertical
-        if (start.substring(1) == end.substring(1)):
+        if (start[1] == end[1]):
             move.append(start)
             for i in range(0, rowDiff):
-                letter = alphabet[ord(start.substring(0))]
-                num = str(i + int(start.substring(1)))
+                letter = alphabet[ord(start[0])]
+                num = str(i + int(start[1]))
                 pos = letter + num
                 move.append(pos)
             return move
@@ -412,10 +412,10 @@ class Pieces():
         #diagonal
         if (rowDiff/colDiff == 1):
             move.append(start)
-            ord(start.substring(0))
+            ord(start[0])
             for i in range(0, rowDiff):
-                letter = alphabet[ord(start.substring(0)) + i]
-                num = i + int(start.substring(1))
+                letter = alphabet[ord(start[0]) + i]
+                num = i + int(start[1])
                 pos = letter + num
                 move.append(pos)
             return move
