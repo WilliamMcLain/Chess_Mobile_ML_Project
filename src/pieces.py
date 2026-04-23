@@ -134,6 +134,9 @@ class Pieces():
                 target = csv_setup.csv_setup.find(end)
                 if target != 'e' and target.startswith('w'):
                     return False
+                # Reject if destination is attacked by black
+                if Pieces.is_square_attacked(end, by_side='b'):
+                    return False
                 return True
 
         elif side == 'b':
@@ -221,6 +224,9 @@ class Pieces():
                 target = csv_setup.csv_setup.find(end)
                 if target != 'e' and target.startswith('b'):
                     return False
+                # Reject if destination is attacked by white
+                if Pieces.is_square_attacked(end, by_side='w'):
+                    return False
                 return True
 
         return False
@@ -243,6 +249,66 @@ class Pieces():
                 print(f"Debug: path blocked at {square}")
                 return False
         return True
+
+    @staticmethod
+    def is_square_attacked(square, by_side, board_state=None):
+        """Returns True if `square` is attacked by any piece of `by_side`."""
+        files = 'abcdefgh'
+        enemy = by_side
+
+        def find(pos):
+            return csv_setup.csv_setup.find(pos)
+
+        fi = ord(square[0]) - ord('a')
+        ri = int(square[1]) - 1
+
+        def ib(f, r): return 0 <= f < 8 and 0 <= r < 8
+        def sq(f, r): return files[f] + str(r + 1)
+
+        # Check pawns
+        pawn_dir = -1 if enemy == 'w' else 1  # direction pawns attack FROM
+        for df in [-1, 1]:
+            f, r = fi + df, ri + pawn_dir
+            if ib(f, r):
+                p = find(sq(f, r))
+                if p == enemy + 'p' or p == enemy + 's':
+                    return True
+
+        # Check knights
+        for df, dr in [(-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1)]:
+            f, r = fi + df, ri + dr
+            if ib(f, r) and find(sq(f, r)) == enemy + 'h':
+                return True
+
+        # Check king
+        for df, dr in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]:
+            f, r = fi + df, ri + dr
+            if ib(f, r) and find(sq(f, r)) == enemy + 'k':
+                return True
+
+        # Check sliding pieces (rook, queen along ranks/files)
+        for df, dr in [(-1,0),(1,0),(0,-1),(0,1)]:
+            f, r = fi + df, ri + dr
+            while ib(f, r):
+                p = find(sq(f, r))
+                if p != 'e':
+                    if p in (enemy+'c', enemy+'q'):
+                        return True
+                    break
+                f += df; r += dr
+
+        # Check sliding pieces (bishop, queen along diagonals)
+        for df, dr in [(-1,-1),(-1,1),(1,-1),(1,1)]:
+            f, r = fi + df, ri + dr
+            while ib(f, r):
+                p = find(sq(f, r))
+                if p != 'e':
+                    if p in (enemy+'b', enemy+'q'):
+                        return True
+                    break
+                f += df; r += dr
+
+        return False
 
     @staticmethod
     def updateChess(side, piece, start, end):
