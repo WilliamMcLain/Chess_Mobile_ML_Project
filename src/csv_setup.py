@@ -1,43 +1,48 @@
+import csv
+import shutil
+
+
 class csv_setup():
 
-    def read(file):
-        def positionfrompiece(piece):
-            return pos
-        def piece(pos):
-            
-            try:
-                csv_find(pos)
-            except:
-                print("position DNE")
-            
-            return str 
-    def write(file, pos):
-        def newpos( pos):
-            writecsv(pos)
+    RESET_FILEPATH = r"data\chess_reset.csv"
+    GAME_FILEPATH  = r"data\chess_document.csv"
 
-    def find():
-        return "k"
-
-    def updateCSV():
-        return False
-
-
+    @staticmethod
     def setup():
-        library = ["pawn", "bishop", "knight", "rooke", "queen", "king"]
-        #write to the file files\chess_document.csv
-        #A1 pawn
-        #A2 bishope
-        #A3 knight
-        #A4 rooke
-        #A5 queen
-        #A6 king
-        #for loop setup
-        for i in len(library):
-            opencsv("files\chess_document.csv")
-            sub = "A" + i
-            writecsv(libray[i], sub)
-        return True
+        # Just copy the reset file into the working game file
+        shutil.copyfile(csv_setup.RESET_FILEPATH, csv_setup.GAME_FILEPATH)
+
+
+    @staticmethod
+    def findSpaceofPiece(piece):
+        #this will search through the entire csv rapidly and find the sapce of a given piece
+        
+        #col = ord(pos[0].lower() - ord('a'))
+        #row = int(pos[1])
+        return reader[row][col]
+    
+    @staticmethod
+    def findPiecewithSpace(space):
+        #this will search through the csv rapidly and give us the piece fro the start and end
+        return 'k'
+
+    @staticmethod #registers piece movement
+    def updateCSV(piece, start, end):
+        col_s = ord(start[0].lower()) - 1
+        row_s = int(start[1]) - 1
+        col_e = ord(end[0].lower()) - 1
+        row_e = int(end[1]) - 1
+
+        with open(csv_setup.GAME_FILEPATH, 'r') as f:
+            board = list(csv.reader(f))
+        board[row_e][col_e] = piece
+        board[row_s][col_s] = 'e'
+        with open(csv_setup.GAME_FILEPATH, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerows(board)
 
     #return a list of pieces in the csv
     def piecelist():
-        return []
+        with open(csv_setup.GAME_FILEPATH, 'r') as f:
+            board = list(csv.reader(f))
+        return [cell for row in board for cell in row if cell != 'e']

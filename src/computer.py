@@ -5,3 +5,4 @@
 #this will inherit C:\Users\mclai\Documents\CodeProjects\code_quick_progress drop\chess\src\csv_setup.py
 
 
+import ranom as rnd
